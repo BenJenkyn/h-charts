@@ -1,71 +1,93 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
+import {
+	LineChart,
+	Line,
+	XAxis,
+	YAxis,
+	Label,
+	ResponsiveContainer,
+} from 'recharts';
 import Title from './Title';
+import { Stock } from '../api/stockHistory';
 
-// Generate Sales Data
-function createData(time: string, amount?: number) {
-  return { time, amount };
+interface Props {
+	stockData: Stock[];
 }
 
-const data = [
-  createData('00:00', 0),
-  createData('03:00', 300),
-  createData('06:00', 600),
-  createData('09:00', 800),
-  createData('12:00', 1500),
-  createData('15:00', 2000),
-  createData('18:00', 2400),
-  createData('21:00', 2400),
-  createData('24:00', undefined),
-];
+// Generate Sales Data
+function createData(date: string, volume: number) {
+	const options = {
+		year: 'numeric' as const,
+		month: 'long' as const,
+		day: 'numeric' as const,
+	};
+	const formattedDate = new Date(date).toLocaleDateString('en-US', options);
+	return { date: formattedDate, volume };
+}
 
-export default function Chart() {
-  const theme = useTheme();
+export default function Chart(props: Props) {
+	const { stockData } = props;
+	const [data, setData] = React.useState<
+		{
+			date: string;
+			volume: number;
+		}[]
+	>([]);
 
-  return (
-    <React.Fragment>
-      <Title>Today</Title>
-      <ResponsiveContainer>
-        <LineChart
-          data={data}
-          margin={{
-            top: 16,
-            right: 16,
-            bottom: 0,
-            left: 24,
-          }}
-        >
-          <XAxis
-            dataKey="time"
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          />
-          <YAxis
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          >
-            <Label
-              angle={270}
-              position="left"
-              style={{
-                textAnchor: 'middle',
-                fill: theme.palette.text.primary,
-                ...theme.typography.body1,
-              }}
-            >
-              Sales ($)
-            </Label>
-          </YAxis>
-          <Line
-            isAnimationActive={false}
-            type="monotone"
-            dataKey="amount"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </React.Fragment>
-  );
+	React.useEffect(() => {
+		const currData = stockData.map((stock) => {
+			return createData(stock.date, stock.volume);
+		});
+		setData(currData);
+	}, [stockData]);
+
+	const theme = useTheme();
+
+	return (
+		<React.Fragment>
+			<Title>Volume Over Time For [TICKER SYMBOL]</Title>
+			<ResponsiveContainer>
+				<LineChart
+					data={data}
+					margin={{
+						top: 16,
+						right: 16,
+						bottom: 0,
+						left: 24,
+					}}
+				>
+					<XAxis
+						dataKey="date"
+						stroke={theme.palette.text.secondary}
+						style={theme.typography.body2}
+					/>
+					<YAxis
+						dataKey="volume"
+						stroke={theme.palette.text.secondary}
+						style={theme.typography.body2}
+					>
+						<Label
+							angle={270}
+							position="left"
+							style={{
+								textAnchor: 'middle',
+								fill: theme.palette.text.primary,
+								...theme.typography.body1,
+							}}
+						>
+							Volume
+						</Label>
+					</YAxis>
+					<Line
+						isAnimationActive={false}
+						type="monotone"
+						dataKey="volume"
+						stroke={theme.palette.primary.main}
+						dot={false}
+					/>
+				</LineChart>
+			</ResponsiveContainer>
+		</React.Fragment>
+	);
 }

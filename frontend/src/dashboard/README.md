@@ -14,6 +14,4 @@
 
 View the demo at https://mui.com/material-ui/getting-started/templates/dashboard/.
 
-## Source
-
-https://github.com/mui/material-ui/tree/v5.14.19/docs/data/material/getting-started/templates/dashboard
+The source for this template at https://github.com/mui/material-ui/tree/v5.14.19/docs/data/material/getting-started/templates/dashboard
