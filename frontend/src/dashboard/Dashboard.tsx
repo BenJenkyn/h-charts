@@ -93,19 +93,14 @@ const Drawer = styled(MuiDrawer, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-function createData(date: string, volume?: number) {
-	return { date, volume };
-}
-
 export default function Dashboard() {
 	const [open, setOpen] = React.useState(true);
 	const [data, setData] = React.useState<Stock[]>([]);
 
 	React.useEffect(() => {
-		getAllStockHistory('MSFT')
-			.then((stockHistory) => {
-				setData(stockHistory);
-			});
+		getAllStockHistory('MSFT').then((stockHistory) => {
+			setData(stockHistory);
+		});
 	}, []);
 	const toggleDrawer = () => {
 		setOpen(!open);
@@ -142,11 +137,6 @@ export default function Dashboard() {
 						>
 							Dashboard
 						</Typography>
-						<IconButton color="inherit">
-							<Badge badgeContent={4} color="secondary">
-								<NotificationsIcon />
-							</Badge>
-						</IconButton>
 					</Toolbar>
 				</AppBar>
 				<Drawer variant="permanent" open={open}>
@@ -194,15 +184,13 @@ export default function Dashboard() {
 										height: 240,
 									}}
 								>
-									<Chart 
-                    stockData={data}
-                  />
+									<Chart stockData={data} />
 								</Paper>
 							</Grid>
 							{/* Recent Orders */}
 							<Grid item xs={12}>
 								<Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-									<Orders />
+									<Orders stockData={data} />
 								</Paper>
 							</Grid>
 						</Grid>

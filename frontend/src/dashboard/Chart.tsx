@@ -65,7 +65,10 @@ export default function Chart(props: Props) {
 					<YAxis
 						dataKey="volume"
 						stroke={theme.palette.text.secondary}
-						style={theme.typography.body2}
+						style={{
+							padding: '20px',
+							...theme.typography.body2,
+						}}
 					>
 						<Label
 							angle={270}
@@ -74,7 +77,9 @@ export default function Chart(props: Props) {
 								textAnchor: 'middle',
 								fill: theme.palette.text.primary,
 								...theme.typography.body1,
+								padding: '20px',
 							}}
+							offset={20}
 						>
 							Volume
 						</Label>
