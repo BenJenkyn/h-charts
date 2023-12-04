@@ -9,7 +9,7 @@ def get_stock_history(ticker, period="15d"):
     try:
         stock = yf.Ticker(ticker)
         history = stock.history(period=period)
-        # print("history", history)
+        history.reset_index(inplace=True)  # Reset the index to make 'Date' a column
         return history.to_dict("records")
     except requests.exceptions.RequestException as e:
         print(f"An error occurred while fetching the stock price: {e}")
