@@ -4,7 +4,7 @@ from finance import get_stock_history
 from lib.helperFunctions import convert_keys_to_camel_case
 
 app = Flask(__name__)
-CORS(app)  # new line
+CORS(app)
 
 @app.route("/stock/<ticker>", methods=["GET"])
 def get_stock(ticker):
