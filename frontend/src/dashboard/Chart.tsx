@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import Title from './Title';
 import { Stock } from '../api/stockHistory';
+import { formatDate } from '../lib/formatDate';
 
 interface Props {
 	stockData: Stock[];
@@ -17,12 +18,7 @@ interface Props {
 
 // Generate Sales Data
 function createData(date: string, volume: number) {
-	const options = {
-		year: 'numeric' as const,
-		month: 'long' as const,
-		day: 'numeric' as const,
-	};
-	const formattedDate = new Date(date).toLocaleDateString('en-US', options);
+	const formattedDate = formatDate(date);
 	return { date: formattedDate, volume };
 }
 

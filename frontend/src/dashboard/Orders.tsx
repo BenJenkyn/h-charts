@@ -7,6 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from './Title';
 import { Stock } from '../api/stockHistory';
+import { formatDate } from '../lib/formatDate';
 
 interface Props {
 	stockData: Stock[];
@@ -26,10 +27,6 @@ function createData(
 	return { id, date, volume, high, low, dividends, open, stockSplits };
 }
 
-function preventDefault(event: React.MouseEvent) {
-	event.preventDefault();
-}
-
 export default function Orders(props: Props) {
 	const { stockData } = props;
 	const [rows, setRows] = React.useState<
@@ -44,6 +41,32 @@ export default function Orders(props: Props) {
 			stockSplits: number;
 		}[]
 	>([]);
+	const [showAll, setShowAll] = React.useState(false);
+	const handleClick = (event: React.MouseEvent) => {
+		event.preventDefault();
+		setShowAll(!showAll);
+	};
+
+	React.useEffect(() => {
+		const sortedStockData = stockData.sort(
+			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+		);
+		const formattedData = sortedStockData.map((stock, index) => {
+			return createData(
+				index,
+				stock.date,
+				stock.volume,
+				stock.high,
+				stock.low,
+				stock.dividends,
+				stock.open,
+				stock.stockSplits
+			);
+		});
+		setRows(formattedData);
+	}, [stockData]);
+
+	const displayedRows = showAll ? rows : rows.slice(0, 5);
 
 	React.useEffect(() => {
 		const currData = stockData.map((stock, index) => {
@@ -69,29 +92,29 @@ export default function Orders(props: Props) {
 					<TableRow>
 						<TableCell>Date</TableCell>
 						<TableCell>Volume</TableCell>
+						<TableCell>Open</TableCell>
 						<TableCell>High</TableCell>
 						<TableCell>Low</TableCell>
 						<TableCell>Dividends</TableCell>
-            <TableCell>Open</TableCell>
-						<TableCell align="right">Stock Splits</TableCell>
+						{/* <TableCell align="right">Stock Splits</TableCell> */}
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{rows.map((row) => (
+					{displayedRows.map((row) => (
 						<TableRow key={row.id}>
-							<TableCell>{row.date}</TableCell>
-              <TableCell>{row.volume}</TableCell>
-              <TableCell>{row.high}</TableCell>
-              <TableCell>{row.low}</TableCell>
-              <TableCell>{row.dividends}</TableCell>
-              <TableCell>{row.open}</TableCell>
-							<TableCell align="right">{`$${row.stockSplits}`}</TableCell>
+							<TableCell>{formatDate(row.date)}</TableCell>
+							<TableCell>{row.volume}</TableCell>
+							<TableCell>{row.open}</TableCell>
+							<TableCell>{row.high}</TableCell>
+							<TableCell>{row.low}</TableCell>
+							<TableCell>{row.dividends}</TableCell>
+							{/* <TableCell align="right">{`$${row.stockSplits}`}</TableCell> */}
 						</TableRow>
 					))}
 				</TableBody>
 			</Table>
-			<Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-				See more orders
+			<Link color="primary" href="#" onClick={handleClick} sx={{ mt: 3 }}>
+				{showAll ? 'Show Less' : 'Show More'}
 			</Link>
 		</React.Fragment>
 	);
