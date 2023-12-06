@@ -12,31 +12,13 @@ import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { mainListItems } from './listItems';
+import { useSearchParams } from 'react-router-dom';
+import { MainListItems } from './listItems';
 import Chart from './Chart';
 import Orders from './Orders';
 import { Stock, getAllStockHistory } from '../api/stockHistory';
-
-function Copyright(props: any) {
-	return (
-		<Typography
-			variant="body2"
-			color="text.secondary"
-			align="center"
-			{...props}
-		>
-			{'Copyright © '}
-			<Link color="inherit" href="https://mui.com/">
-				Your Website
-			</Link>{' '}
-			{new Date().getFullYear()}
-			{'.'}
-		</Typography>
-	);
-}
 
 const drawerWidth: number = 240;
 
@@ -94,12 +76,15 @@ const defaultTheme = createTheme();
 export default function Dashboard() {
 	const [open, setOpen] = React.useState(true);
 	const [data, setData] = React.useState<Stock[]>([]);
+	const [searchParams] = useSearchParams();
 
 	React.useEffect(() => {
-		getAllStockHistory('MSFT').then((stockHistory) => {
+		const ticker = searchParams.get('ticker');
+		if(!ticker) return;
+		getAllStockHistory(ticker).then((stockHistory) => {
 			setData(stockHistory);
 		});
-	}, []);
+	}, [searchParams]);
 	const toggleDrawer = () => {
 		setOpen(!open);
 	};
@@ -133,7 +118,7 @@ export default function Dashboard() {
 							noWrap
 							sx={{ flexGrow: 1 }}
 						>
-							Dashboard
+							{searchParams.get('ticker')}
 						</Typography>
 					</Toolbar>
 				</AppBar>
@@ -152,7 +137,7 @@ export default function Dashboard() {
 					</Toolbar>
 					<Divider />
 					<List component="nav">
-						{mainListItems}
+						<MainListItems />
 					</List>
 				</Drawer>
 				<Box
@@ -190,7 +175,6 @@ export default function Dashboard() {
 								</Paper>
 							</Grid>
 						</Grid>
-						<Copyright sx={{ pt: 4 }} />
 					</Container>
 				</Box>
 			</Box>

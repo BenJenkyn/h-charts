@@ -42,7 +42,7 @@ export default function Chart(props: Props) {
 
 	return (
 		<React.Fragment>
-			<Title>Volume Over Time For [TICKER SYMBOL]</Title>
+			<Title>Volume Over Time</Title>
 			<ResponsiveContainer>
 				<LineChart
 					data={data}
