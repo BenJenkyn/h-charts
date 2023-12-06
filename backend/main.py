@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from flask_cors import CORS  # new import
+from flask_cors import CORS
 from finance import get_stock_history
 from lib.helperFunctions import convert_keys_to_camel_case
 
